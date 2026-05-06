@@ -515,9 +515,9 @@ $("button.chat-button").on("click", function () {
       }
     }
 
-    // For "Yes" on Medicare: run number.php, loadRingba(), and ringba-trigger API now (before showing messages). For "No" we run it later when we show msg17 (step 4 path).
+    // For both Medicare answers: run number.php/loadRingba before showing messages so final phone reveal timing is consistent.
     (async function () {
-      if (buttonValue == "Yes") {
+      if (buttonValue == "Yes" || buttonValue == "No") {
         await updatePhoneNumberReactive();
       }
       scrollToBottom();
@@ -543,21 +543,14 @@ $("button.chat-button").on("click", function () {
               scrollToBottom();
               setTimeout(function () {
                 $(".temp-typing").remove();
-                // Always end on phone CTA for both Medicare answers.
-                // For "No", fetch/update number and load Ringba at this point.
-                (async function () {
-                  if (buttonValue == "No") {
-                    await updatePhoneNumberReactive();
-                  }
-                  $("#msg17").before(typingEffect());
+                $("#msg17").before(typingEffect());
+                scrollToBottom();
+                setTimeout(function () {
+                  $(".temp-typing").remove();
+                  $("#msg17").removeClass("hidden");
                   scrollToBottom();
-                  setTimeout(function () {
-                    $(".temp-typing").remove();
-                    $("#msg17").removeClass("hidden");
-                    scrollToBottom();
-                    startCountdown();
-                  }, 750);
-                })();
+                  startCountdown();
+                }, 750);
               }, speed);
             }, speed);
           }, speed);
